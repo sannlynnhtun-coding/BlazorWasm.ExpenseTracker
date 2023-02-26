@@ -1,0 +1,65 @@
+﻿@page "/"
+@inject IJSRuntime _jsRuntime
+
+<h1>Expense Tracker</h1>
+<div class="container">
+    <div class="header">
+        <img src="https://i.ibb.co/jfScDTC/budget.png"
+             alt="Expense Tracker" />
+        <div class="balance-container">
+            <h4>Your Balance</h4>
+            <h2 id="balance" class="balance">$ @Total</h2>
+        </div>
+    </div>
+    <div class="inc-exp-container">
+        <div>
+            <h4>Income</h4>
+            <p id="money-plus" class="money plus">$ +@Income</p>
+        </div>
+        <div>
+            <h4>Expenses</h4>
+            <p id="money-minus" class="money minus">$ -@Expense</p>
+        </div>
+    </div>
+    <h3>History</h3>
+    <ul id="list" class="list">
+        @foreach (var item in transactions)
+        {
+            <li class="@(item.TransactionType == "Expense" ? "minus" : "plus")">
+                @item.Description
+                <span>@(item.TransactionType == "Expense" ? "-" : "+")@item.Amount.ToString("n2")</span>
+                <button type="button" class="delete-btn" @onclick="() => RemoveTransaction(item.Id)">
+                    <i class="fa fa-times"></i>
+                </button>
+            </li>
+        }
+    </ul>
+    <h3>Add new transaction</h3>
+    <form id="form" autocomplete="off">
+        <div class="form-control">
+            <label for="text">Description</label>
+            <input type="text" autocomplete="off" id="text" @bind-value="@transaction.Description" placeholder="Enter description..." />
+        </div>
+        <div class="form-control">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input mt-3" @onchange="TransactionTypeChange" name="TransactionType" type="radio" id="rdoIncome" value="Income">
+                <label class="form-check-label" for="rdoIncome">Income</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input mt-3" @onchange="TransactionTypeChange" name="TransactionType" type="radio" id="rdoExpense" value="Expense" checked>
+                <label class="form-check-label" for="rdoExpense">Expense</label>
+            </div>
+        </div>
+        <div class="form-control">
+            <label for="amount">
+                Amount
+            </label>
+            <input type="text" style="text-align: right;" id="amount" @bind-value="Amount" placeholder="Enter amount..." />
+        </div>
+        <button class="btn" type="button" @onclick="AddTransaction">Add transaction</button>
+    </form>
+</div>
+<!-- Notification -->
+<div class="notification-container" id="notification">
+    <p>Please add a description and amount</p>
+</div>
